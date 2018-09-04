@@ -1,0 +1,11 @@
+I particularly like the Pinball Breakout. I find it very creative to combine these 2 classic games in a way that creates new rules and requires different strategies to win.
+
+I would like to build 3 different levels in my game. The first level will have about 25 blocks with 5 of them being permanent. The second level will consist of blocks that are blocked by permanent blocks, making it harder for the player to hit them. The third level will have blocks that are moving at a constant speed as well.
+
+I intend to have 4 different kinds of blocks. Black are the permanent blocks, red are blocks which take 4 hits to destroy and give the most power ups, green blocks take 2 hits to destroy and give power ups occasionally and blue are the basic blocks which take 1 hit to destroy.
+
+I would like to have 4 power ups in my game. The first one would reduce the speed of the ball for a while. The second one would make the permanent blocks vanish and the third would give the player an extra life. The last one would allow the top and bottom side to be permeable and the play is immune to missing the ball for a while.
+
+I hope to implement all the suggested cheat codes, including clearing the current level and jumping to the next level, adding additional lives to the player, and resetting the ball and paddle to their starting position.
+
+The extra feature I would like to add is the paddle reversal mode. In this mode, the paddle will be at the top of the screen and the the scene is reversed. I could also have a multiple paddle mode where there are more than one paddles and the player simultaneously controls all of them. These are substantial extra features because they change the game rules significantly and encourage the player to use different strategies to win the game.
