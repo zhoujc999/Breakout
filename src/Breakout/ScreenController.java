@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 
 public class ScreenController {
 
@@ -12,6 +15,8 @@ public class ScreenController {
     private Group root;
     private Paddle paddle;
     private Ball ball;
+    private ArrayList<Brick> bricks;
+    private Random dice = new Random();
 
 
 
@@ -23,6 +28,7 @@ public class ScreenController {
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
         setPaddle();
         setBall();
+        setBricks();
 
     }
 
@@ -57,6 +63,31 @@ public class ScreenController {
     }
     public void moveBall() {
         getBall().move();
+    }
+
+
+
+    private void setBricks() {
+        bricks = new ArrayList<>();
+        for (int i = 200; i < 400; i += 40) {
+            for (int j = 5; j < 300; j += 75) {
+                Brick brick = new Brick(j, i,3);
+                root.getChildren().add(brick.getView());
+                bricks.add(brick);
+            }
+        }
+
+    }
+
+    public ArrayList getBricks() {
+        return bricks;
+    }
+
+
+
+    // Returns an "interesting", non-zero random value in the range (min, max)
+    private int getRandomInRange (int min, int max) {
+        return min + dice.nextInt(max - min) + 1;
     }
 
 }

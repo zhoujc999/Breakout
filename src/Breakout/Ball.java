@@ -92,4 +92,10 @@ public class Ball {
         ball.setY(ball.getY() + Game.SECOND_DELAY * yVel);
     }
 
+    public void xBounce() {
+        xVel *= -1;
+    }
+    public void yBounce() {
+        yVel *= -1;
+    }
 }
