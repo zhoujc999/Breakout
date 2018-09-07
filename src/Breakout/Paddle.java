@@ -23,11 +23,10 @@ import javafx.scene.layout.StackPane;
 
 public class Paddle {
     private static final String PADDLE_IMAGE = "paddle.gif";
-    private int PADDLE_WIDTH = 40;
+    private int PADDLE_WIDTH = 50;
     private int PADDLE_HEIGHT = 10;
-    private int speed = 1600;
+    private int xVel = 160;
     private ImageView paddle;
-    private final int CORRECTION = 0;
 
 
     /**
@@ -82,12 +81,19 @@ public class Paddle {
     }
 
     public void setSpeed(double times) {
-        speed *= times;
+        xVel *= times;
     }
 
     public void move(int direction) {
-        if (direction == 1 && getMaxX() <= (Game.WIDTH - CORRECTION) || direction == -1 && getMinX() >= (0 + CORRECTION)) {
-            paddle.setX(getMinX() + speed * direction * Game.SECOND_DELAY);
+
+        if (getMinX() + xVel * direction * Game.SECOND_DELAY < 0) {
+            paddle.setX(0);
+        }
+        else if (getMaxX() + xVel * direction * Game.SECOND_DELAY > Game.WIDTH) {
+            paddle.setX(Game.WIDTH - PADDLE_WIDTH);
+        }
+        else {
+            paddle.setX(getMinX() + xVel * direction * Game.SECOND_DELAY);
         }
     }
 }

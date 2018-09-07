@@ -11,6 +11,7 @@ public class ScreenController {
     private Scene scene;
     private Group root;
     private Paddle paddle;
+    private Ball ball;
 
 
 
@@ -32,20 +33,30 @@ public class ScreenController {
 
 
 
-    public void setPaddle() {
+    private void setPaddle() {
         paddle = new Paddle(180,500);
         root.getChildren().add(paddle.getView());
     }
 
-    public Paddle getPaddle() {
+    private Paddle getPaddle() {
         return paddle;
     }
 
-    public void setBall() {
-
-
+    public void movePaddle(int direction) {
+        getPaddle().move(direction);
     }
 
+    private void setBall() {
+        double paddleMiddle = (getPaddle().getMinX() + getPaddle().getMaxX()) / 2 - Game.BALL_SIZE / 2;
+        ball = new Ball(paddleMiddle, getPaddle().getMinY() - (double) Game.BALL_SIZE, 0, -50);
+        root.getChildren().add(ball.getView());
+    }
 
+    private Ball getBall() {
+        return ball;
+    }
+    public void moveBall() {
+        getBall().move();
+    }
 
 }
