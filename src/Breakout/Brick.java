@@ -20,15 +20,12 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class Brick {
-    private int BRICK_WIDTH = 70;
-    private int BRICK_HEIGHT = 15;
     private static final String BLUEBRICK_IMAGE = "brick1.gif";
     private static final String GREENBRICK_IMAGE = "brick8.gif";
     private static final String GREYBRICK_IMAGE = "brick3.gif";
 
     private ImageView brick;
     private int hits;
-    private boolean toBeRemoved = false;
 
     public Brick(double x, double y, int type){
         String path = "";
@@ -49,8 +46,8 @@ public class Brick {
         brick = new ImageView(image);
         brick.setX(x);
         brick.setY(y);
-        brick.setFitWidth(BRICK_WIDTH);
-        brick.setFitHeight(BRICK_HEIGHT);
+        brick.setFitWidth(Game.BRICK_WIDTH);
+        brick.setFitHeight(Game.BRICK_HEIGHT);
     }
 
     public ImageView getView() {
@@ -89,6 +86,14 @@ public class Brick {
         brick.setY(y);
     }
 
+    public void gotHit() {
+        if (hits > 0) {
+            hits--;
+        }
+    }
 
+    public boolean toBeRemoved() {
+        return hits == 0;
+    }
 
 }

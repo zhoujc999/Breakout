@@ -23,8 +23,6 @@ import javafx.scene.layout.StackPane;
 
 public class Paddle {
     private static final String PADDLE_IMAGE = "paddle.gif";
-    private int PADDLE_WIDTH = 50;
-    private int PADDLE_HEIGHT = 10;
     private int xVel = 160;
     private ImageView paddle;
 
@@ -40,8 +38,8 @@ public class Paddle {
         paddle = new ImageView(image);
         paddle.setX(x);
         paddle.setY(y);
-        paddle.setFitWidth(PADDLE_WIDTH);
-        paddle.setFitHeight(PADDLE_HEIGHT);
+        paddle.setFitWidth(Game.PADDLE_WIDTH);
+        paddle.setFitHeight(Game.PADDLE_HEIGHT);
     }
 
     public ImageView getView() {
@@ -90,7 +88,7 @@ public class Paddle {
             paddle.setX(0);
         }
         else if (getMaxX() + xVel * direction * Game.SECOND_DELAY > Game.WIDTH) {
-            paddle.setX(Game.WIDTH - PADDLE_WIDTH);
+            paddle.setX(Game.WIDTH - Game.PADDLE_WIDTH);
         }
         else {
             paddle.setX(getMinX() + xVel * direction * Game.SECOND_DELAY);

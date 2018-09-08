@@ -16,12 +16,11 @@ public class ScreenController {
     private Paddle paddle;
     private Ball ball;
     private ArrayList<Brick> bricks;
-    private Random dice = new Random();
-
 
 
     public ScreenController() {
     }
+
     public void setScene() {
         root = new Group();
         // create a place to see the shapes
@@ -37,14 +36,17 @@ public class ScreenController {
         return scene;
     }
 
+    public Group getGroup() {
+        return root;
+    }
 
 
     private void setPaddle() {
-        paddle = new Paddle(180,500);
+        paddle = new Paddle((Game.WIDTH - Game.PADDLE_WIDTH) / 2, 5.0 / 6 * Game.HEIGHT);
         root.getChildren().add(paddle.getView());
     }
 
-    private Paddle getPaddle() {
+    public Paddle getPaddle() {
         return paddle;
     }
 
@@ -54,24 +56,26 @@ public class ScreenController {
 
     private void setBall() {
         double paddleMiddle = (getPaddle().getMinX() + getPaddle().getMaxX()) / 2 - Game.BALL_SIZE / 2;
-        ball = new Ball(paddleMiddle, getPaddle().getMinY() - (double) Game.BALL_SIZE, 0, -50);
+        int xRandVel = Game.getRandomInRange(50, 100);
+        int yRandVel = (int) Math.sqrt(Game.BALL_SPEED * Game.BALL_SPEED - xRandVel * xRandVel);
+        ball = new Ball(paddleMiddle, getPaddle().getMinY() - (double) Game.BALL_SIZE, xRandVel, -yRandVel);
         root.getChildren().add(ball.getView());
     }
 
-    private Ball getBall() {
+    public Ball getBall() {
         return ball;
     }
+
     public void moveBall() {
         getBall().move();
     }
 
 
-
     private void setBricks() {
         bricks = new ArrayList<>();
-        for (int i = 200; i < 400; i += 40) {
-            for (int j = 5; j < 300; j += 75) {
-                Brick brick = new Brick(j, i,3);
+        for (int i = 100; i < 300; i += 60) {
+            for (int j = 20; j < 300; j += 120) {
+                Brick brick = new Brick(j, i, 1);
                 root.getChildren().add(brick.getView());
                 bricks.add(brick);
             }
@@ -81,13 +85,6 @@ public class ScreenController {
 
     public ArrayList getBricks() {
         return bricks;
-    }
-
-
-
-    // Returns an "interesting", non-zero random value in the range (min, max)
-    private int getRandomInRange (int min, int max) {
-        return min + dice.nextInt(max - min) + 1;
     }
 
 }

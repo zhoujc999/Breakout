@@ -74,12 +74,28 @@ public class Ball {
         return ball.getBoundsInParent().getHeight();
     }
 
+    public double getXVel() {
+        return xVel;
+    }
+
+    public double getYVel() {
+        return yVel;
+    }
+
     public void setX(double x) {
         ball.setX(x);
     }
 
     public void setY(double y) {
         ball.setY(y);
+    }
+
+    public void setXVel(double xV) {
+        xVel = xV;
+    }
+
+    public void setYVel(double yV) {
+        yVel = yV;
     }
 
     public void setSpeed(double times) {
@@ -93,9 +109,17 @@ public class Ball {
     }
 
     public void xBounce() {
-        xVel *= -1;
+        if (yVel < 3 && yVel > -3) {
+            yVel += Game.getRandomInRange(-5, 5);
+        }
+        double randVal = Game.getRandomInRange(950, 1050) / 1000.0;
+        xVel *= -randVal;
     }
     public void yBounce() {
-        yVel *= -1;
+        if (xVel < 3 && xVel > -3) {
+            xVel += Game.getRandomInRange(-5, 5);
+        }
+        double randVal = Game.getRandomInRange(950, 1050) / 1000.0;
+        yVel *= -randVal;
     }
 }

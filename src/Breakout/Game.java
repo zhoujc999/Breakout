@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.util.Random;
 
 public class Game {
     public static final String TITLE = "Breakout";
@@ -20,17 +21,37 @@ public class Game {
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 
     public static final Paint BACKGROUND = Color.rgb(245,245,245);
+
+    public static final int PADDLE_WIDTH = 60;
+    public static final int PADDLE_HEIGHT = 15;
+
+    public static final int BRICK_WIDTH = 80;
+    public static final int BRICK_HEIGHT = 24;
+
+    public static final int BALL_SPEED = 300;
     public static final int BALL_SIZE = 16;
 
 
+
+
+    // Returns an "interesting", non-zero random value in the range (min, max)
+    public static final int getRandomInRange (int min, int max) {
+        return min + dice.nextInt(max - min) + 1;
+    }
+
+
+
+
     ScreenController screenController;
-    private int dir = 0;
+    GamePhysics physics;
+    private int paddleDirection = 0;
+
+    private static  Random dice = new Random();
 
 
-
-    private int level = 1;
-    private int score = 0;
-    private int lives = 3;
+//    private int level = 1;
+//    private int score = 0;
+//    private int lives = 3;
 
     public void initialize(Stage stage) {
         // attach scene to the stage and display it
@@ -43,6 +64,7 @@ public class Game {
         stage.setTitle(TITLE);
         stage.show();
         // attach "game loop" to timeline to play it
+        physics = new GamePhysics(screenController);
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> step());
         var animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
@@ -56,10 +78,11 @@ public class Game {
     // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start.
     private void step () {
         screenController.moveBall();
-        if (dir == -1) {
+        physics.detectCollision();
+        if (paddleDirection == -1) {
             screenController.movePaddle(-1);
         }
-        else if (dir == 1) {
+        else if (paddleDirection == 1) {
             screenController.movePaddle(1);
         }
     }
@@ -67,18 +90,21 @@ public class Game {
     // What to do each time a key is pressed
     private void handleKeyPress(KeyCode code) {
         if (code == KeyCode.RIGHT) {
-            dir = 1;
+            paddleDirection = 1;
         }
         else if (code == KeyCode.LEFT) {
-            dir = -1;
+            paddleDirection = -1;
         }
     }
 
     private void handleKeyRelease(KeyCode code) {
         if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
-            dir = 0;
+            paddleDirection = 0;
         }
     }
+
+
+
 
 
 }
