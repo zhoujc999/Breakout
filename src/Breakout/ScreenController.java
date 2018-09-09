@@ -19,17 +19,14 @@ public class ScreenController {
 
 
     public ScreenController() {
-    }
-
-    public void setScene() {
         root = new Group();
         // create a place to see the shapes
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
         setPaddle();
         setBall();
         setBricks();
-
     }
+
 
 
     public Scene getScene() {
@@ -38,6 +35,12 @@ public class ScreenController {
 
     public Group getGroup() {
         return root;
+    }
+
+
+    public void resetBallPaddle() {
+        resetPaddle();
+        resetBall();
     }
 
 
@@ -54,11 +57,24 @@ public class ScreenController {
         getPaddle().move(direction);
     }
 
-    private void setBall() {
+    private void resetPaddle() {
+        root.getChildren().remove(paddle.getView());
+        setPaddle();
+    }
+
+
+    private void setBallStartState() {
         double paddleMiddle = (getPaddle().getMinX() + getPaddle().getMaxX()) / 2 - Game.BALL_SIZE / 2;
-        int xRandVel = Game.getRandomInRange(50, 100);
+        int xRandVel = Game.getRandomInRange(20, 80);
         int yRandVel = (int) Math.sqrt(Game.BALL_SPEED * Game.BALL_SPEED - xRandVel * xRandVel);
-        ball = new Ball(paddleMiddle, getPaddle().getMinY() - (double) Game.BALL_SIZE, xRandVel, -yRandVel);
+        ball.setX(paddleMiddle);
+        ball.setY(getPaddle().getMinY() - (double) Game.BALL_SIZE);
+        ball.setXVel(xRandVel);
+        ball.setYVel(-yRandVel);
+    }
+    private void setBall() {
+        ball = new Ball();
+        setBallStartState();
         root.getChildren().add(ball.getView());
     }
 
@@ -70,6 +86,11 @@ public class ScreenController {
         getBall().move();
     }
 
+
+    private void resetBall() {
+        root.getChildren().remove(ball.getView());
+        setBall();
+    }
 
     private void setBricks() {
         bricks = new ArrayList<>();
@@ -85,6 +106,23 @@ public class ScreenController {
 
     public ArrayList getBricks() {
         return bricks;
+    }
+
+    public void removeBrick(Brick b) {
+        root.getChildren().remove(b.getView());
+    }
+
+    public boolean allBricksRemoved() {
+        return bricks.isEmpty();
+    }
+
+    public void resetBricks() {
+        for (Brick brick: bricks) {
+            root.getChildren().remove(brick.getView());
+        }
+        bricks.clear();
+
+        setBricks();
     }
 
 }

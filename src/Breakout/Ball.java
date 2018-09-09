@@ -32,16 +32,14 @@ public class Ball {
     /**
      * Constructor of the Paddle class.
      */
+
     public Ball() {
-        new Ball(180, 500, 0 , 0);
-    }
-    public Ball(double x, double y, double xV, double yV) {
         Image image = new Image(getClass().getClassLoader().getResourceAsStream(BALL_IMAGE));
         ball = new ImageView(image);
-        ball.setX(x);
-        ball.setY(y);
-        xVel = xV;
-        yVel = yV;
+        ball.setX(0);
+        ball.setY(0);
+        xVel = 0;
+        yVel = 0;
         ball.setFitWidth(Game.BALL_SIZE);
         ball.setFitHeight(Game.BALL_SIZE);
     }

@@ -22,21 +22,27 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class GamePhysics {
-    ScreenController sc;
-    Ball ball;
-    Paddle paddle;
-    ArrayList<Brick> bricks;
+    private ScreenController sc;
+    private Ball ball;
+    private Paddle paddle;
+    private ArrayList<Brick> bricks;
 
 
 
-    GamePhysics(ScreenController screenController) {
+    public GamePhysics(ScreenController screenController) {
         sc = screenController;
+        getScreenElements();
+    }
+
+
+    public void getScreenElements() {
         ball = sc.getBall();
         paddle = sc.getPaddle();
         bricks = sc.getBricks();
     }
 
-    public void detectCollision() {
+    public void collisionEffects() {
+        ballOutTop();
         ballWithWall();
         ballWithPaddle();
         ballWithBricks();
@@ -45,12 +51,25 @@ public class GamePhysics {
     private void ballWithWall() {
         double ballMinX = ball.getMinX();
         double ballMaxX = ball.getMaxX();
-        double ballMinY = ball.getMinY();
-        double ballMaxY = ball.getMaxY();
         if (ballMinX <= 0 || ballMaxX >= Game.WIDTH) {
             ball.xBounce();
         }
-        if (ballMinY <= 0 || ballMaxY >= Game.HEIGHT) {
+    }
+
+    public boolean ballOutBottom() {
+        if (ball.getMaxY() >= Game.HEIGHT) {
+            sc.resetBallPaddle();
+            getScreenElements();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    private void ballOutTop() {
+        if (ball.getMinY() <= 0) {
             ball.yBounce();
         }
     }
@@ -126,7 +145,7 @@ public class GamePhysics {
             b.gotHit();
         }
         if (b.toBeRemoved()) {
-            sc.getGroup().getChildren().remove(b.getView());
+            sc.removeBrick(b);
         }
 
 

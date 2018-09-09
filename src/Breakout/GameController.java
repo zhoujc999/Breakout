@@ -22,11 +22,44 @@ import javafx.scene.layout.StackPane;
 
 
 public class GameController {
+    private int level;
+    private int life;
+    private boolean won;
+    private boolean dead;
 
 
+    public GameController() {
+        level = 1;
+        life = 3;
+        won = false;
+        dead = false;
+    }
+
+    public boolean getWon() {
+        return won;
+    }
+
+    public void increaseLevel() {
+        if (level < 3) {
+            level++;
+        }
+        else {
+            won = true;
+        }
+    }
+
+    public int getLevel() {
 
 
+    }
 
+    public void decreaseLife() {
+
+    }
+
+    public void increaseLife() {
+
+    }
 
 
 }

@@ -91,6 +91,7 @@ public class Paddle {
             paddle.setX(Game.WIDTH - Game.PADDLE_WIDTH);
         }
         else {
+
             paddle.setX(getMinX() + xVel * direction * Game.SECOND_DELAY);
         }
     }

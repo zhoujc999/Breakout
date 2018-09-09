@@ -49,14 +49,10 @@ public class Game {
     private static  Random dice = new Random();
 
 
-//    private int level = 1;
-//    private int score = 0;
-//    private int lives = 3;
 
     public void initialize(Stage stage) {
         // attach scene to the stage and display it
         screenController = new ScreenController();
-        screenController.setScene();
         Scene scene = screenController.getScene();
         scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
         scene.setOnKeyReleased(event -> handleKeyRelease(event.getCode()));
@@ -78,7 +74,17 @@ public class Game {
     // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start.
     private void step () {
         screenController.moveBall();
-        physics.detectCollision();
+
+        physics.collisionEffects();
+
+        if (physics.ballOutBottom()) {
+            System.out.println("ha");
+        }
+
+        if (screenController.allBricksRemoved()) {
+            System.out.println("yay");
+        }
+
         if (paddleDirection == -1) {
             screenController.movePaddle(-1);
         }
