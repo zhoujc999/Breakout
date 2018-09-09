@@ -41,12 +41,23 @@ public class GamePhysics {
         bricks = sc.getBricks();
     }
 
+    public void moveScreenElements() {
+        sc.moveBall();
+        sc.movePaddle();
+    }
+
     public void collisionEffects() {
         ballOutTop();
         ballWithWall();
         ballWithPaddle();
         ballWithBricks();
     }
+
+
+
+
+
+
 
     private void ballWithWall() {
         double ballMinX = ball.getMinX();

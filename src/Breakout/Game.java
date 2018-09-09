@@ -31,10 +31,7 @@ public class Game {
     public static final int BALL_SPEED = 300;
     public static final int BALL_SIZE = 16;
 
-
-
-
-    // Returns an "interesting", non-zero random value in the range (min, max)
+//    Returns an "interesting", non-zero random value in the range (min, max)
     public static final int getRandomInRange (int min, int max) {
         return min + dice.nextInt(max - min) + 1;
     }
@@ -42,25 +39,27 @@ public class Game {
 
 
 
-    ScreenController screenController;
-    GamePhysics physics;
-    private int paddleDirection = 0;
+    private ScreenController screenController;
+    private GameController gameController;
+    private GamePhysics physics;
 
-    private static  Random dice = new Random();
+    private static Random dice = new Random();
 
 
 
     public void initialize(Stage stage) {
-        // attach scene to the stage and display it
+//        Initialize screen controller for levels
         screenController = new ScreenController();
         Scene scene = screenController.getScene();
-        scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
-        scene.setOnKeyReleased(event -> handleKeyRelease(event.getCode()));
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.show();
-        // attach "game loop" to timeline to play it
+
+
+        gameController = new GameController();
+//        Initialize game mechanics
         physics = new GamePhysics(screenController);
+//        Attach "game loop" to timeline to play it
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> step());
         var animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
@@ -70,44 +69,20 @@ public class Game {
 
 
 
-    // Change properties of shapes to animate them
-    // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start.
+//    Performs methods every frame
     private void step () {
-        screenController.moveBall();
-
         physics.collisionEffects();
-
+        physics.moveScreenElements();
         if (physics.ballOutBottom()) {
-            System.out.println("ha");
+            gameController.decreaseLife();
         }
 
         if (screenController.allBricksRemoved()) {
-            System.out.println("yay");
-        }
-
-        if (paddleDirection == -1) {
-            screenController.movePaddle(-1);
-        }
-        else if (paddleDirection == 1) {
-            screenController.movePaddle(1);
+            gameController.increaseLevel();
         }
     }
 
-    // What to do each time a key is pressed
-    private void handleKeyPress(KeyCode code) {
-        if (code == KeyCode.RIGHT) {
-            paddleDirection = 1;
-        }
-        else if (code == KeyCode.LEFT) {
-            paddleDirection = -1;
-        }
-    }
 
-    private void handleKeyRelease(KeyCode code) {
-        if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
-            paddleDirection = 0;
-        }
-    }
 
 
 

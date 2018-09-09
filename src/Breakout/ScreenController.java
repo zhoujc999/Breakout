@@ -2,7 +2,9 @@ package Breakout;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
@@ -16,17 +18,20 @@ public class ScreenController {
     private Paddle paddle;
     private Ball ball;
     private ArrayList<Brick> bricks;
+    private int paddleDirection;
 
 
     public ScreenController() {
         root = new Group();
         // create a place to see the shapes
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
+        scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+        scene.setOnKeyReleased(event -> handleKeyRelease(event.getCode()));
         setPaddle();
         setBall();
         setBricks();
+        paddleDirection = 0;
     }
-
 
 
     public Scene getScene() {
@@ -36,6 +41,15 @@ public class ScreenController {
     public Group getGroup() {
         return root;
     }
+
+
+    public void setLevel(int level) {
+
+
+
+    }
+
+
 
 
     public void resetBallPaddle() {
@@ -53,8 +67,8 @@ public class ScreenController {
         return paddle;
     }
 
-    public void movePaddle(int direction) {
-        getPaddle().move(direction);
+    public void movePaddle() {
+        getPaddle().move(paddleDirection);
     }
 
     private void resetPaddle() {
@@ -92,11 +106,18 @@ public class ScreenController {
         setBall();
     }
 
-    private void setBricks() {
+    private void setBricks(int level) {
         bricks = new ArrayList<>();
+        int type = 1;
+        switch (level) {
+            case 1: type = 1;
+            case 2: type = 2;
+            case 3: type = 3;
+        }
+
         for (int i = 100; i < 300; i += 60) {
             for (int j = 20; j < 300; j += 120) {
-                Brick brick = new Brick(j, i, 1);
+                Brick brick = new Brick(j, i, type);
                 root.getChildren().add(brick.getView());
                 bricks.add(brick);
             }
@@ -123,6 +144,22 @@ public class ScreenController {
         bricks.clear();
 
         setBricks();
+    }
+
+//    What to do each time a key is pressed
+    private void handleKeyPress(KeyCode code) {
+        if (code == KeyCode.RIGHT) {
+            paddleDirection = 1;
+        }
+        else if (code == KeyCode.LEFT) {
+            paddleDirection = -1;
+        }
+    }
+
+    private void handleKeyRelease(KeyCode code) {
+        if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
+            paddleDirection = 0;
+        }
     }
 
 }

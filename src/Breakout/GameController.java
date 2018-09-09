@@ -49,16 +49,23 @@ public class GameController {
     }
 
     public int getLevel() {
-
+        return level;
 
     }
 
     public void decreaseLife() {
-
+        if (life > 1) {
+            life--;
+        }
+        else {
+            dead = true;
+        }
     }
 
     public void increaseLife() {
-
+        if (life < 5) {
+            life++;
+        }
     }
 
 
