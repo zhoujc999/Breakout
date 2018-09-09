@@ -6,9 +6,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Paint;
-
 import java.util.ArrayList;
-import java.util.Random;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+
 
 
 public class ScreenController {
@@ -19,17 +20,24 @@ public class ScreenController {
     private Ball ball;
     private ArrayList<Brick> bricks;
     private int paddleDirection;
+    private int numPermanentBlocks;
+    private Text levelText;
+    private Text lifeText;
 
+    private int level;
+    private int life;
 
-    public ScreenController() {
+    public ScreenController(int gameLevel, int gameLife) {
+        level = gameLevel;
+        life = gameLife;
         root = new Group();
         // create a place to see the shapes
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
-        scene.setOnKeyPressed(e -> handleKeyPress(e.getCode()));
-        scene.setOnKeyReleased(event -> handleKeyRelease(event.getCode()));
         setPaddle();
         setBall();
         setBricks();
+        setLevelText();
+        setLifeText();
         paddleDirection = 0;
     }
 
@@ -43,10 +51,17 @@ public class ScreenController {
     }
 
 
-    public void setLevel(int level) {
+    public void setLevel(int l) {
+        level = l;
+        resetBallPaddle();
+        removeAllBricks();
+        setBricks();
+        changeLevelText();
+    }
 
-
-
+    public void setLife(int l) {
+        life = l;
+        changeLifeText();
     }
 
 
@@ -67,6 +82,10 @@ public class ScreenController {
         return paddle;
     }
 
+    public void setPaddleDirection(int direction) {
+        paddleDirection = direction;
+    }
+
     public void movePaddle() {
         getPaddle().move(paddleDirection);
     }
@@ -79,7 +98,11 @@ public class ScreenController {
 
     private void setBallStartState() {
         double paddleMiddle = (getPaddle().getMinX() + getPaddle().getMaxX()) / 2 - Game.BALL_SIZE / 2;
-        int xRandVel = Game.getRandomInRange(20, 80);
+        int dir = Game.getRandomInRange(-1, 1);
+        int xRandVel = Game.getRandomInRange(30, 80);
+        if (dir == 0) {
+            xRandVel *= -1;
+        }
         int yRandVel = (int) Math.sqrt(Game.BALL_SPEED * Game.BALL_SPEED - xRandVel * xRandVel);
         ball.setX(paddleMiddle);
         ball.setY(getPaddle().getMinY() - (double) Game.BALL_SIZE);
@@ -106,13 +129,16 @@ public class ScreenController {
         setBall();
     }
 
-    private void setBricks(int level) {
+    private void setBricks() {
         bricks = new ArrayList<>();
         int type = 1;
         switch (level) {
             case 1: type = 1;
+                break;
             case 2: type = 2;
+                break;
             case 3: type = 3;
+                break;
         }
 
         for (int i = 100; i < 300; i += 60) {
@@ -133,33 +159,37 @@ public class ScreenController {
         root.getChildren().remove(b.getView());
     }
 
-    public boolean allBricksRemoved() {
-        return bricks.isEmpty();
-    }
-
-    public void resetBricks() {
+    private void removeAllBricks() {
         for (Brick brick: bricks) {
             root.getChildren().remove(brick.getView());
         }
         bricks.clear();
-
-        setBricks();
+    }
+    public boolean allBricksRemoved() {
+        return bricks.isEmpty();
     }
 
-//    What to do each time a key is pressed
-    private void handleKeyPress(KeyCode code) {
-        if (code == KeyCode.RIGHT) {
-            paddleDirection = 1;
-        }
-        else if (code == KeyCode.LEFT) {
-            paddleDirection = -1;
-        }
+
+    private void setLevelText() {
+        levelText = new Text(Game.WIDTH * 4 / 5, Game.HEIGHT / 30, "Level: " + level);
+        Font font = new Font(Game.DISPLAY_SIZE);
+        levelText.setFont(font);
+        root.getChildren().add(levelText);
     }
 
-    private void handleKeyRelease(KeyCode code) {
-        if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
-            paddleDirection = 0;
-        }
+    private void changeLevelText() {
+        levelText.setText("Level: " + level);
+    }
+
+    private void setLifeText() {
+        lifeText = new Text(0, Game.HEIGHT / 30, "Lives: " + life);
+        Font font = new Font(Game.DISPLAY_SIZE);
+        lifeText.setFont(font);
+        root.getChildren().add(lifeText);
+    }
+
+    private void changeLifeText() {
+        lifeText.setText("Lives: " + life);
     }
 
 }

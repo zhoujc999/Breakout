@@ -8,17 +8,10 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.image.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class GamePhysics {
@@ -54,11 +47,6 @@ public class GamePhysics {
     }
 
 
-
-
-
-
-
     private void ballWithWall() {
         double ballMinX = ball.getMinX();
         double ballMaxX = ball.getMaxX();
@@ -68,14 +56,7 @@ public class GamePhysics {
     }
 
     public boolean ballOutBottom() {
-        if (ball.getMaxY() >= Game.HEIGHT) {
-            sc.resetBallPaddle();
-            getScreenElements();
-            return true;
-        }
-        else {
-            return false;
-        }
+        return ball.getMaxY() >= Game.HEIGHT;
     }
 
 

@@ -31,35 +31,30 @@ public class GameController {
     public GameController() {
         level = 1;
         life = 3;
-        won = false;
-        dead = false;
-    }
 
-    public boolean getWon() {
-        return won;
     }
 
     public void increaseLevel() {
-        if (level < 3) {
+        if (level < 4) {
             level++;
         }
-        else {
-            won = true;
-        }
     }
+
 
     public int getLevel() {
         return level;
 
     }
 
+    public boolean isWon() {
+        return level == 3;
+    }
+
     public void decreaseLife() {
-        if (life > 1) {
+        if (life > 0) {
             life--;
         }
-        else {
-            dead = true;
-        }
+
     }
 
     public void increaseLife() {
@@ -68,5 +63,11 @@ public class GameController {
         }
     }
 
+    public int getLife() {
+        return life;
+    }
 
+    public boolean isDead() {
+        return life == 0;
+    }
 }
