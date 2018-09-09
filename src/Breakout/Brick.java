@@ -20,28 +20,30 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class Brick {
-    private static final String BLUEBRICK_IMAGE = "brick1.gif";
-    private static final String GREENBRICK_IMAGE = "brick8.gif";
-    private static final String GREYBRICK_IMAGE = "brick3.gif";
-
     private ImageView brick;
     private int hits;
+    private int type;
 
-    public Brick(double x, double y, int type){
+
+    public Brick(double x, double y, int brickType){
         String path = "";
-        if (type == 1) {
-            path = BLUEBRICK_IMAGE;
-            hits = 1;
-        }
-        else if (type == 2) {
-            path = GREENBRICK_IMAGE;
-            hits = 3;
-        }
-        else if (type == 3) {
-            path = GREYBRICK_IMAGE;
-            hits = -1;
-        }
+        switch (brickType) {
+            case 1:
+                path = Game.BLUEBRICK_IMAGE;
+                hits = 1;
+                break;
 
+            case 2:
+                path = Game.GREENBRICK_IMAGE;
+                hits = 3;
+                break;
+
+            case 3:
+                path = Game.GREYBRICK_IMAGE;
+                hits = -1;
+                break;
+        }
+        type = brickType;
         Image image = new Image(getClass().getClassLoader().getResourceAsStream(path));
         brick = new ImageView(image);
         brick.setX(x);
@@ -70,12 +72,8 @@ public class Brick {
         return brick.getBoundsInParent().getMaxY();
     }
 
-    public double getWidth() {
-        return brick.getBoundsInParent().getWidth();
-    }
-
-    public double getHeight() {
-        return brick.getBoundsInParent().getHeight();
+    public int getType(){
+        return type;
     }
 
     public void setX(double x) {

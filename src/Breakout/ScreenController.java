@@ -1,5 +1,6 @@
 package Breakout;
 
+import java.util.Scanner;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -30,6 +31,7 @@ public class ScreenController {
     public ScreenController(int gameLevel, int gameLife) {
         level = gameLevel;
         life = gameLife;
+        numPermanentBlocks = 0;
         root = new Group();
         // create a place to see the shapes
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
@@ -53,6 +55,7 @@ public class ScreenController {
 
     public void setLevel(int l) {
         level = l;
+        numPermanentBlocks = 0;
         resetBallPaddle();
         removeAllBricks();
         setBricks();
@@ -63,8 +66,6 @@ public class ScreenController {
         life = l;
         changeLifeText();
     }
-
-
 
 
     public void resetBallPaddle() {
@@ -109,6 +110,7 @@ public class ScreenController {
         ball.setXVel(xRandVel);
         ball.setYVel(-yRandVel);
     }
+
     private void setBall() {
         ball = new Ball();
         setBallStartState();
@@ -123,7 +125,6 @@ public class ScreenController {
         getBall().move();
     }
 
-
     private void resetBall() {
         root.getChildren().remove(ball.getView());
         setBall();
@@ -131,24 +132,60 @@ public class ScreenController {
 
     private void setBricks() {
         bricks = new ArrayList<>();
-        int type = 1;
+        var bricksType = new ArrayList<Integer>();
+        int initialXPos = (Game.WIDTH - 3 * (Game.BRICK_WIDTH + 2 * Game.BRICK_XGAP)) / 2;
+        int brickXPos = initialXPos;
+        int brickYPos = (Game.HEIGHT - 5 * (Game.BRICK_HEIGHT + 2 * Game.BRICK_YGAP)) / 2;
+        int xNum = 0;
         switch (level) {
-            case 1: type = 1;
+            case 1:
+                readFileInput(Game.LEVELONE_PATH, bricksType);
                 break;
-            case 2: type = 2;
+            case 2:
+                readFileInput(Game.LEVELTWO_PATH, bricksType);
                 break;
-            case 3: type = 3;
+            case 3:
+                readFileInput(Game.LEVELTHREE_PATH, bricksType);
                 break;
+             default:
+                 readFileInput(Game.LEVELONE_PATH, bricksType);
+                 break;
         }
 
-        for (int i = 100; i < 300; i += 60) {
-            for (int j = 20; j < 300; j += 120) {
-                Brick brick = new Brick(j, i, type);
-                root.getChildren().add(brick.getView());
-                bricks.add(brick);
+        for (Integer brickType: bricksType) {
+            Brick brick = new Brick(brickXPos + Game.BRICK_XGAP,brickYPos + Game.BRICK_YGAP, brickType);
+            if (brickType == 3) {
+                numPermanentBlocks++;
             }
-        }
+            root.getChildren().add(brick.getView());
+            bricks.add(brick);
+            xNum++;
+            if (xNum < 3) {
+                brickXPos += (Game.BRICK_WIDTH + 2 * Game.BRICK_XGAP);
+            }
+            else {
+                xNum = 0;
+                brickXPos = initialXPos;
+                brickYPos += (Game.BRICK_HEIGHT + 2 * Game.BRICK_YGAP);
+            }
 
+        }
+    }
+
+    private void readFileInput(String levelPath, ArrayList<Integer> brickList){
+        Scanner sc = new Scanner(getClass().getClassLoader().getResourceAsStream(levelPath));
+        try{
+            while (sc.hasNextInt()){
+                brickList.add(sc.nextInt());
+            }
+            sc.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (sc != null) sc.close();
+        }
     }
 
     public ArrayList getBricks() {
@@ -166,13 +203,13 @@ public class ScreenController {
         bricks.clear();
     }
     public boolean allBricksRemoved() {
-        return bricks.isEmpty();
+        return bricks.size() == numPermanentBlocks;
     }
 
 
     private void setLevelText() {
         levelText = new Text(Game.WIDTH * 4 / 5, Game.HEIGHT / 30, "Level: " + level);
-        Font font = new Font(Game.DISPLAY_SIZE);
+        Font font = new Font(Game.TEXT_SIZE);
         levelText.setFont(font);
         root.getChildren().add(levelText);
     }
@@ -183,7 +220,7 @@ public class ScreenController {
 
     private void setLifeText() {
         lifeText = new Text(0, Game.HEIGHT / 30, "Lives: " + life);
-        Font font = new Font(Game.DISPLAY_SIZE);
+        Font font = new Font(Game.TEXT_SIZE);
         lifeText.setFont(font);
         root.getChildren().add(lifeText);
     }

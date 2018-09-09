@@ -21,16 +21,31 @@ public class Game {
 
     public static final Paint BACKGROUND = Color.rgb(245,245,245);
 
+    public static final String LEVELONE_PATH = "level1.txt";
+    public static final String LEVELTWO_PATH = "level2.txt";
+    public static final String LEVELTHREE_PATH = "level3.txt";
+
+    public static final String PADDLE_PATH = "paddle.gif";
     public static final int PADDLE_WIDTH = 60;
-    public static final int PADDLE_HEIGHT = 15;
+    public static final int PADDLE_HEIGHT = 12;
+    public static final int PADDLE_SPEED = 160;
 
+    public static final String BLUEBRICK_IMAGE = "brick1.gif";
+    public static final String GREENBRICK_IMAGE = "brick8.gif";
+    public static final String GREYBRICK_IMAGE = "brick3.gif";
     public static final int BRICK_WIDTH = 80;
-    public static final int BRICK_HEIGHT = 24;
+    public static final int BRICK_HEIGHT = 16;
 
+//    Horizontal and vertical gaps between bricks
+    public static final int BRICK_XGAP = 20;
+    public static final int BRICK_YGAP = 5;
+
+    public static final String BALL_PATH = "ball.gif";
     public static final int BALL_SPEED = 300;
     public static final int BALL_SIZE = 16;
 
-    public static final int DISPLAY_SIZE = 20;
+//    Life and level text size
+    public static final int TEXT_SIZE = 20;
 
 //    Returns an "interesting", non-zero random value in the range (min, max)
     public static final int getRandomInRange (int min, int max) {
@@ -47,7 +62,7 @@ public class Game {
 
     private static Random dice = new Random();
 
-    private boolean paused = false;
+    private boolean paused = true;
 
     public void initialize(Stage stage) {
 //        Initialize screen controller for levels
@@ -63,19 +78,22 @@ public class Game {
         physics = new GamePhysics(screenController);
 //        Attach "game loop" to timeline to play it
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> step());
+//        Respond to key actions
         scene.setOnKeyPressed(event -> handleKeyPress(event.getCode()));
         scene.setOnKeyReleased(event -> handleKeyRelease(event.getCode()));
         animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.getKeyFrames().add(frame);
-        animation.play();
+        animation.pause();
     }
 
 
 
 //    Performs methods every frame
     private void step () {
+//        Detect collisions
         physics.collisionEffects();
+//        Move objects
         physics.moveScreenElements();
         if (physics.ballOutBottom()) {
             loseLife();
@@ -109,24 +127,28 @@ public class Game {
 
     //    What to do each time a key is pressed
     private void handleKeyPress(KeyCode code) {
+//        Pause game
         if (code == KeyCode.SPACE && !paused) {
             animation.pause();
             paused = true;
         }
+//        Resume game
         else if (code == KeyCode.SPACE && paused) {
             animation.play();
             paused = false;
         }
-
+//        Move paddle to the right
         else if (code == KeyCode.RIGHT) {
             screenController.setPaddleDirection(1);
         }
+//        Move paddle to the left
         else if (code == KeyCode.LEFT) {
             screenController.setPaddleDirection(-1);
         }
     }
 
     private void handleKeyRelease(KeyCode code) {
+//        Stop paddle movement when left or right is released
         if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
             screenController.setPaddleDirection(0);
         }

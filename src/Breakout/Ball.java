@@ -22,7 +22,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class Ball {
-    private static final String BALL_IMAGE = "ball.gif";
     private double xVel;
     private double yVel;
     private ImageView ball;
@@ -34,7 +33,7 @@ public class Ball {
      */
 
     public Ball() {
-        Image image = new Image(getClass().getClassLoader().getResourceAsStream(BALL_IMAGE));
+        Image image = new Image(getClass().getClassLoader().getResourceAsStream(Game.BALL_PATH));
         ball = new ImageView(image);
         ball.setX(0);
         ball.setY(0);
@@ -62,14 +61,6 @@ public class Ball {
 
     public double getMaxY() {
         return ball.getBoundsInParent().getMaxY();
-    }
-
-    public double getWidth() {
-        return ball.getBoundsInParent().getWidth();
-    }
-
-    public double getHeight() {
-        return ball.getBoundsInParent().getHeight();
     }
 
     public double getXVel() {

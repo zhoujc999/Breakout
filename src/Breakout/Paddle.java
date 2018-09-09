@@ -22,9 +22,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class Paddle {
-    private static final String PADDLE_IMAGE = "paddle.gif";
-    private int xVel = 160;
     private ImageView paddle;
+    private int xVel;
 
 
     /**
@@ -34,12 +33,13 @@ public class Paddle {
         new Paddle(180, 500);
     }
     public Paddle(double x, double y) {
-        Image image = new Image(getClass().getClassLoader().getResourceAsStream(PADDLE_IMAGE));
+        Image image = new Image(getClass().getClassLoader().getResourceAsStream(Game.PADDLE_PATH));
         paddle = new ImageView(image);
         paddle.setX(x);
         paddle.setY(y);
         paddle.setFitWidth(Game.PADDLE_WIDTH);
         paddle.setFitHeight(Game.PADDLE_HEIGHT);
+        xVel = Game.PADDLE_SPEED;
     }
 
     public ImageView getView() {
@@ -60,14 +60,6 @@ public class Paddle {
 
     public double getMaxY() {
         return paddle.getBoundsInParent().getMaxY();
-    }
-
-    public double getWidth() {
-        return paddle.getBoundsInParent().getWidth();
-    }
-
-    public double getHeight() {
-        return paddle.getBoundsInParent().getHeight();
     }
 
     public void setX(double x) {
