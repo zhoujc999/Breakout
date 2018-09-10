@@ -32,13 +32,13 @@ public class LevelScreenController {
     private int power;
 
     public LevelScreenController(int gameLevel, int gameLife, int gamePower) {
+        root = new Group();
+        // create a place to see the shapes
+        scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
         level = gameLevel;
         life = gameLife;
         power = gamePower;
         numPermBlocks = 0;
-        root = new Group();
-        // create a place to see the shapes
-        scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
         setPaddle();
         setBall();
         setBricks();
@@ -69,7 +69,6 @@ public class LevelScreenController {
     }
 
 
-
     public void resetBallPaddle() {
         resetPaddle();
         resetBall();
@@ -92,7 +91,6 @@ public class LevelScreenController {
     public void movePaddle() {
         paddle.move(paddleDirection);
     }
-
 
 
     private void resetPaddle() {
@@ -152,17 +150,16 @@ public class LevelScreenController {
             case 3:
                 readFileInput(Game.LEVELTHREE_PATH, bricksType);
                 break;
-             default:
-                 readFileInput(Game.LEVELONE_PATH, bricksType);
-                 break;
+            default:
+                readFileInput(Game.LEVELONE_PATH, bricksType);
+                break;
         }
 
-        for (Integer brickType: bricksType) {
-            Brick brick = new Brick(brickXPos + Game.BRICK_XGAP,brickYPos + Game.BRICK_YGAP, brickType);
+        for (Integer brickType : bricksType) {
+            Brick brick = new Brick(brickXPos + Game.BRICK_XGAP, brickYPos + Game.BRICK_YGAP, brickType);
             if (brickType == 3) {
                 numPermBlocks++;
-            }
-            else if (brickType == 2) {
+            } else if (brickType == 2) {
                 setPowerup(brick);
             }
             root.getChildren().add(brick.getView());
@@ -170,8 +167,7 @@ public class LevelScreenController {
             xNum++;
             if (xNum < 3) {
                 brickXPos += (Game.BRICK_WIDTH + 2 * Game.BRICK_XGAP);
-            }
-            else {
+            } else {
                 xNum = 0;
                 brickXPos = initialXPos;
                 brickYPos += (Game.BRICK_HEIGHT + 2 * Game.BRICK_YGAP);
@@ -180,18 +176,16 @@ public class LevelScreenController {
         }
     }
 
-    private void readFileInput(String levelPath, ArrayList<Integer> brickList){
+    private void readFileInput(String levelPath, ArrayList<Integer> brickList) {
         Scanner sc = new Scanner(getClass().getClassLoader().getResourceAsStream(levelPath));
-        try{
-            while (sc.hasNextInt()){
+        try {
+            while (sc.hasNextInt()) {
                 brickList.add(sc.nextInt());
             }
             sc.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (sc != null) sc.close();
         }
     }
@@ -205,7 +199,7 @@ public class LevelScreenController {
     }
 
     private void removeAllBricks() {
-        for (Brick brick: bricks) {
+        for (Brick brick : bricks) {
             root.getChildren().remove(brick.getView());
         }
         bricks.clear();
@@ -221,15 +215,13 @@ public class LevelScreenController {
 
 
     private void setPowerup(Brick b) {
-        int randInt = Game.getRandomInRange(23, 28);
+        int randInt = Game.getRandomInRange(0, 30);
         Powerup powerup;
         if (randInt < 10) {
             powerup = new Powerup(1, b);
-        }
-        else if (randInt < 20) {
+        } else if (randInt < 20) {
             powerup = new Powerup(2, b);
-        }
-        else {
+        } else {
             powerup = new Powerup(3, b);
         }
         root.getChildren().add(powerup.getView());
@@ -242,7 +234,7 @@ public class LevelScreenController {
     }
 
     public void movePowerups() {
-        for (Powerup p: powerups) {
+        for (Powerup p : powerups) {
             p.move();
         }
     }
@@ -252,7 +244,7 @@ public class LevelScreenController {
     }
 
     private void removeAllPowerups() {
-        for (Powerup powerup: powerups) {
+        for (Powerup powerup : powerups) {
             root.getChildren().remove(powerup.getView());
         }
         powerups.clear();
@@ -294,5 +286,26 @@ public class LevelScreenController {
     public void changePowerText(int p) {
         power = p;
         powerText.setText("Power: " + power);
+    }
+
+
+    public void wonScreen() {
+
+        root.getChildren().clear();
+        // create a place to see the shapes
+        Text wonText = new Text(Game.WIDTH * 1 / 5, 2 * Game.HEIGHT / 5, "YOU WON!");
+        Font font = new Font(30);
+        wonText.setFont(font);
+        root.getChildren().add(wonText);
+    }
+
+    public void lostScreen() {
+
+        root.getChildren().clear();
+        // create a place to see the shapes
+        Text lostText = new Text(Game.WIDTH * 1 / 5, 2 * Game.HEIGHT / 5, "YOU LOST!");
+        Font font = new Font(30);
+        lostText.setFont(font);
+        root.getChildren().add(lostText);
     }
 }

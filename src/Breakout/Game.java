@@ -65,7 +65,7 @@ public class Game {
 
 
 
-
+    private Stage s;
     private LevelScreenController levelScreenController;
     private GameController gameController;
     private GamePhysics physics;
@@ -80,12 +80,13 @@ public class Game {
     private boolean specialPaused = false;
 
     public void initialize(Stage stage) {
+        s = stage;
 //        Initialize screen controller for levels
         levelScreenController = new LevelScreenController(1, 3, 0);
         Scene scene = levelScreenController.getScene();
-        stage.setScene(scene);
-        stage.setTitle(TITLE);
-        stage.show();
+        s.setScene(scene);
+        s.setTitle(TITLE);
+        s.show();
 
 
         gameController = new GameController();
@@ -101,6 +102,7 @@ public class Game {
         animation.getKeyFrames().add(frame);
         pause();
     }
+
 
 
 
@@ -163,23 +165,28 @@ public class Game {
     private void loseLife() {
         gameController.decreaseLife();
         if (gameController.isDead()) {
-//            animation.stop();
+            animation.stop();
+            levelScreenController.lostScreen();
+        }
+        else {
+            levelScreenController.resetBallPaddle();
+            levelScreenController.changeLifeText(gameController.getLife());
+            physics.getScreenElements();
             pause();
         }
-        levelScreenController.resetBallPaddle();
-        levelScreenController.changeLifeText(gameController.getLife());
-        physics.getScreenElements();
-        pause();
     }
 
     private void nextLevel() {
         gameController.increaseLevel();
         if (gameController.isWon()) {
             animation.stop();
+            levelScreenController.wonScreen();
         }
-        levelScreenController.setLevel(gameController.getLevel());
-        physics.getScreenElements();
-        pause();
+        else {
+            levelScreenController.setLevel(gameController.getLevel());
+            physics.getScreenElements();
+            pause();
+        }
     }
 
 
