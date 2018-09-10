@@ -30,9 +30,9 @@ public class Game {
     public static final int PADDLE_HEIGHT = 12;
     public static final int PADDLE_SPEED = 160;
 
-    public static final String BLUEBRICK_IMAGE = "brick1.gif";
-    public static final String GREENBRICK_IMAGE = "brick8.gif";
-    public static final String GREYBRICK_IMAGE = "brick3.gif";
+    public static final String BRICK1_IMAGE = "brick1.gif";
+    public static final String BRICK2_IMAGE = "brick8.gif";
+    public static final String BRICK3_IMAGE = "brick3.gif";
     public static final int BRICK_WIDTH = 80;
     public static final int BRICK_HEIGHT = 16;
 
@@ -43,6 +43,13 @@ public class Game {
     public static final String BALL_PATH = "ball.gif";
     public static final int BALL_SPEED = 300;
     public static final int BALL_SIZE = 16;
+
+    public static final String POWERUP1_PATH = "sizepower.gif";
+    public static final String POWERUP2_PATH = "pointspower.gif";
+    public static final String POWERUP3_PATH = "laserpower.gif";
+    public static final int POWERUP_SIZE = 16;
+    public static final int POWERUP_MINSPEED = 100;
+    public static final int POWERUP_MAXSPEED = 400;
 
 //    Life and level text size
     public static final int TEXT_SIZE = 20;

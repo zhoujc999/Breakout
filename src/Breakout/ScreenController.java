@@ -20,6 +20,7 @@ public class ScreenController {
     private Paddle paddle;
     private Ball ball;
     private ArrayList<Brick> bricks;
+    private ArrayList<Powerup> powerups;
     private int paddleDirection;
     private int numPermanentBlocks;
     private Text levelText;
@@ -58,6 +59,7 @@ public class ScreenController {
         numPermanentBlocks = 0;
         resetBallPaddle();
         removeAllBricks();
+        removeAllPowerups();
         setBricks();
         changeLevelText();
     }
@@ -88,7 +90,7 @@ public class ScreenController {
     }
 
     public void movePaddle() {
-        getPaddle().move(paddleDirection);
+        paddle.move(paddleDirection);
     }
 
     private void resetPaddle() {
@@ -122,7 +124,7 @@ public class ScreenController {
     }
 
     public void moveBall() {
-        getBall().move();
+        ball.move();
     }
 
     private void resetBall() {
@@ -132,6 +134,7 @@ public class ScreenController {
 
     private void setBricks() {
         bricks = new ArrayList<>();
+        powerups = new ArrayList<>();
         var bricksType = new ArrayList<Integer>();
         int initialXPos = (Game.WIDTH - 3 * (Game.BRICK_WIDTH + 2 * Game.BRICK_XGAP)) / 2;
         int brickXPos = initialXPos;
@@ -156,6 +159,9 @@ public class ScreenController {
             Brick brick = new Brick(brickXPos + Game.BRICK_XGAP,brickYPos + Game.BRICK_YGAP, brickType);
             if (brickType == 3) {
                 numPermanentBlocks++;
+            }
+            else if (brickType == 2) {
+                setPowerup(brick);
             }
             root.getChildren().add(brick.getView());
             bricks.add(brick);
@@ -207,6 +213,40 @@ public class ScreenController {
     }
 
 
+    private void setPowerup(Brick b) {
+        int randInt = Game.getRandomInRange(0, 30);
+        Powerup powerup;
+        if (randInt < 10) {
+            powerup = new Powerup(1, b);
+        }
+        else if (randInt < 20) {
+            powerup = new Powerup(2, b);
+        }
+        else {
+            powerup = new Powerup(3, b);
+        }
+        root.getChildren().add(powerup.getView());
+        powerups.add(powerup);
+
+    }
+
+    public ArrayList getPowerups() {
+        return powerups;
+    }
+
+    public void movePowerups() {
+        for (Powerup p: powerups) {
+            p.move();
+        }
+
+    }
+    private void removeAllPowerups() {
+        for (Powerup powerup: powerups) {
+            root.getChildren().remove(powerup.getView());
+        }
+        powerups.clear();
+    }
+
     private void setLevelText() {
         levelText = new Text(Game.WIDTH * 4 / 5, Game.HEIGHT / 30, "Level: " + level);
         Font font = new Font(Game.TEXT_SIZE);
@@ -228,5 +268,4 @@ public class ScreenController {
     private void changeLifeText() {
         lifeText.setText("Lives: " + life);
     }
-
 }

@@ -19,11 +19,16 @@ public class GamePhysics {
     private Ball ball;
     private Paddle paddle;
     private ArrayList<Brick> bricks;
+    private ArrayList<Brick> bricksToBeRemoved;
+    private ArrayList<Powerup> powerups;
+    private ArrayList<Powerup> powerupsToBeRemoved;
 
 
 
     public GamePhysics(ScreenController screenController) {
         sc = screenController;
+        bricksToBeRemoved = new ArrayList<>();
+        powerupsToBeRemoved = new ArrayList<>();
         getScreenElements();
     }
 
@@ -32,11 +37,13 @@ public class GamePhysics {
         ball = sc.getBall();
         paddle = sc.getPaddle();
         bricks = sc.getBricks();
+        powerups = sc.getPowerups();
     }
 
     public void moveScreenElements() {
         sc.moveBall();
         sc.movePaddle();
+        sc.
     }
 
     public void collisionEffects() {
@@ -44,6 +51,7 @@ public class GamePhysics {
         ballWithWall();
         ballWithPaddle();
         ballWithBricks();
+        paddleWithPowerups();
     }
 
 
@@ -92,10 +100,10 @@ public class GamePhysics {
 
     }
 
+//    Detect ball collision with bricks
     private void ballWithBricks() {
-        ArrayList<Brick> bricksToBeRemoved = new ArrayList<>();
+        bricksToBeRemoved.clear();
         for (Brick brick: bricks) {
-
             ballWithBrick(brick);
             if (brick.toBeRemoved()) {
                 bricksToBeRemoved.add(brick);
@@ -106,6 +114,7 @@ public class GamePhysics {
 
     }
 
+//    Detect collision with individual brick
     private void ballWithBrick(Brick b) {
         double ballMinX = ball.getMinX();
         double ballMaxX = ball.getMaxX();
@@ -139,10 +148,41 @@ public class GamePhysics {
         if (b.toBeRemoved()) {
             sc.removeBrick(b);
         }
+    }
 
+    private void paddleWithPowerups() {
+        powerupsToBeRemoved.clear();
+        for (Powerup powerup: powerups) {
+            paddleWithPowerup(powerup);
+            powerupOutBottom(powerup);
+            if (powerup.toBeRemoved()) {
+                bricksToBeRemoved.add(powerup);
+            }
 
+        }
+        powerups.removeAll(powerupsToBeRemoved);
 
     }
+
+    private void paddleWithPowerup(Powerup powerup) {
+        double powerupMinX = powerup.getMinX();
+        double powerupMaxX = powerup.getMaxX();
+        double powerupMinY = powerup.getMinY();
+        double powerupMaxY = powerup.getMaxY();
+        double paddleMinX = paddle.getMinX();
+        double paddleMaxX = paddle.getMaxX();
+        double paddleMinY = paddle.getMinY();
+        double paddleMaxY = paddle.getMaxY();
+
+
+        // check for hit on the upper edge
+        if (ball.getYVel() > 0 && powerupMaxY >= paddleMinY && powerupMinY <= paddleMinY && ((powerupMaxX >= paddleMinX) && (powerupMaxX <= paddleMaxX) || (powerupMinX >= paddleMinX && powerupMinX <= paddleMaxX))) {
+            powerup.remove();
+        }
+
+    }
+
+
 }
 
 

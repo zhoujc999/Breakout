@@ -25,21 +25,21 @@ public class Brick {
     private int type;
 
 
-    public Brick(double x, double y, int brickType){
+    public Brick(double x, double y, int brickType) {
         String path = "";
         switch (brickType) {
             case 1:
-                path = Game.BLUEBRICK_IMAGE;
+                path = Game.BRICK1_IMAGE;
                 hits = 1;
                 break;
 
             case 2:
-                path = Game.GREENBRICK_IMAGE;
+                path = Game.BRICK2_IMAGE;
                 hits = 3;
                 break;
 
             case 3:
-                path = Game.GREYBRICK_IMAGE;
+                path = Game.BRICK3_IMAGE;
                 hits = -1;
                 break;
         }
