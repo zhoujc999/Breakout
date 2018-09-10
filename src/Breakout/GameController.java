@@ -38,6 +38,10 @@ public class GameController {
         }
     }
 
+    public void setLevel(int l) {
+        level = l;
+    }
+
 
     public int getLevel() {
         return level;

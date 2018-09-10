@@ -207,6 +207,20 @@ public class Game {
         else if (code == KeyCode.P) {
             specialPause();
         }
+
+        else if (code == KeyCode.DIGIT2) {
+            gameController.setLevel(2);
+            levelScreenController.setLevel(2);
+            physics.getScreenElements();
+            pause();
+        }
+
+        else if (code == KeyCode.DIGIT3) {
+            gameController.setLevel(3);
+            levelScreenController.setLevel(3);
+            physics.getScreenElements();
+            pause();
+        }
     }
 
     private void handleKeyRelease(KeyCode code) {
