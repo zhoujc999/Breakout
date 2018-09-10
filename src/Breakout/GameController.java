@@ -49,7 +49,7 @@ public class GameController {
     }
 
     public boolean isWon() {
-        return level == 2;
+        return level == 4;
     }
 
     public void increaseLife() {

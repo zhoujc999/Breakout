@@ -65,7 +65,7 @@ public class Game {
 
 
 
-    private Stage s;
+
     private LevelScreenController levelScreenController;
     private GameController gameController;
     private GamePhysics physics;
@@ -74,19 +74,19 @@ public class Game {
     private static Random dice = new Random();
 
     private boolean paused = false;
+    private boolean stopped = false;
 
     private boolean timerStarted = false;
     private int timer = 0;
     private boolean specialPaused = false;
 
     public void initialize(Stage stage) {
-        s = stage;
 //        Initialize screen controller for levels
         levelScreenController = new LevelScreenController(1, 3, 0);
         Scene scene = levelScreenController.getScene();
-        s.setScene(scene);
-        s.setTitle(TITLE);
-        s.show();
+        stage.setScene(scene);
+        stage.setTitle(TITLE);
+        stage.show();
 
 
         gameController = new GameController();
@@ -134,17 +134,17 @@ public class Game {
                     levelScreenController.changePowerText(gameController.getPower());
                 }
             }
+            if (timerStarted) {
+                if (timer > 0) {
+                    timer--;
+                }
+                else {
+                    stopTimer();
+                }
+            }
         }
         else {
             physics.onlyMovePaddle();
-        }
-        if (timerStarted) {
-            if (timer > 0) {
-                timer--;
-            }
-            else {
-                stopTimer();
-            }
         }
     }
 
@@ -166,6 +166,7 @@ public class Game {
         gameController.decreaseLife();
         if (gameController.isDead()) {
             animation.stop();
+            stopped = true;
             levelScreenController.lostScreen();
         }
         else {
@@ -180,6 +181,7 @@ public class Game {
         gameController.increaseLevel();
         if (gameController.isWon()) {
             animation.stop();
+            stopped = true;
             levelScreenController.wonScreen();
         }
         else {
@@ -193,40 +195,50 @@ public class Game {
     //    What to do each time a key is pressed
     private void handleKeyPress(KeyCode code) {
 //        Pause and resume game
-        if (code == KeyCode.SPACE) {
-            pause();
-        }
-//        Move paddle to the right
-        else if (code == KeyCode.RIGHT) {
-            levelScreenController.setPaddleDirection(1);
-        }
-//        Move paddle to the left
-        else if (code == KeyCode.LEFT) {
-            levelScreenController.setPaddleDirection(-1);
-        }
-        else if (code == KeyCode.P) {
-            specialPause();
-        }
-
-        else if (code == KeyCode.DIGIT2) {
-            gameController.setLevel(2);
-            levelScreenController.setLevel(2);
-            physics.getScreenElements();
-            pause();
-        }
-
-        else if (code == KeyCode.DIGIT3) {
-            gameController.setLevel(3);
-            levelScreenController.setLevel(3);
-            physics.getScreenElements();
-            pause();
+        if (!stopped) {
+            if (code == KeyCode.SPACE) {
+                pause();
+            }
+//            Move paddle to the right
+            else if (code == KeyCode.RIGHT) {
+                levelScreenController.setPaddleDirection(1);
+            }
+//            Move paddle to the left
+            else if (code == KeyCode.LEFT) {
+                levelScreenController.setPaddleDirection(-1);
+            }
+            else if (code == KeyCode.P) {
+                specialPause();
+            }
+            else if (code == KeyCode.DIGIT2) {
+                gameController.setLevel(2);
+                levelScreenController.setLevel(2);
+                physics.getScreenElements();
+                if (!paused) {
+                    pause();
+                }
+            }
+            else if (code == KeyCode.DIGIT3) {
+                gameController.setLevel(3);
+                levelScreenController.setLevel(3);
+                physics.getScreenElements();
+                if (!paused) {
+                    pause();
+                }
+            }
+            else if (code == KeyCode.H) {
+                gameController.increaseLife();
+                levelScreenController.changeLifeText(gameController.getLife());
+            }
         }
     }
 
     private void handleKeyRelease(KeyCode code) {
-//        Stop paddle movement when left or right is released
-        if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
-            levelScreenController.setPaddleDirection(0);
+        if (!stopped) {
+//            Stop paddle movement when left or right is released
+            if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
+                levelScreenController.setPaddleDirection(0);
+            }
         }
     }
 
