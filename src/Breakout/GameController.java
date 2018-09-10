@@ -24,14 +24,12 @@ import javafx.scene.layout.StackPane;
 public class GameController {
     private int level;
     private int life;
-    private boolean won;
-    private boolean dead;
-
+    private int power;
 
     public GameController() {
         level = 1;
         life = 3;
-
+        power = 0;
     }
 
     public void increaseLevel() {
@@ -50,6 +48,12 @@ public class GameController {
         return level == 3;
     }
 
+    public void increaseLife() {
+        if (life < 5) {
+            life++;
+        }
+    }
+
     public void decreaseLife() {
         if (life > 0) {
             life--;
@@ -57,11 +61,6 @@ public class GameController {
 
     }
 
-    public void increaseLife() {
-        if (life < 5) {
-            life++;
-        }
-    }
 
     public int getLife() {
         return life;
@@ -69,5 +68,20 @@ public class GameController {
 
     public boolean isDead() {
         return life == 0;
+    }
+
+    public void increasePower() {
+            power++;
+    }
+
+    public int getPower() {
+        return power;
+
+    }
+
+    public void usePower() {
+        if (power > 0) {
+            power--;
+        }
     }
 }

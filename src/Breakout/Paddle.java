@@ -62,8 +62,8 @@ public class Paddle {
         return paddle.getBoundsInParent().getMaxY();
     }
 
-    public void setX(double x) {
-        paddle.setX(x);
+    public void setWidth(double x) {
+        paddle.setFitWidth(x);
     }
 
     public void setY(double y) {
@@ -75,15 +75,7 @@ public class Paddle {
     }
 
     public void move(int direction) {
-
-        if (getMinX() + xVel * direction * Game.SECOND_DELAY < 0) {
-            paddle.setX(0);
-        }
-        else if (getMaxX() + xVel * direction * Game.SECOND_DELAY > Game.WIDTH) {
-            paddle.setX(Game.WIDTH - Game.PADDLE_WIDTH);
-        }
-        else {
-
+        if (getMinX() + xVel * direction * Game.SECOND_DELAY > 0 && getMaxX() + xVel * direction * Game.SECOND_DELAY < Game.WIDTH) {
             paddle.setX(getMinX() + xVel * direction * Game.SECOND_DELAY);
         }
     }

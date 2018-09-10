@@ -1,6 +1,5 @@
 package Breakout;
 
-import java.util.ArrayList;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
@@ -48,8 +47,13 @@ public class Game {
     public static final String POWERUP2_PATH = "pointspower.gif";
     public static final String POWERUP3_PATH = "laserpower.gif";
     public static final int POWERUP_SIZE = 16;
-    public static final int POWERUP_MINSPEED = 100;
-    public static final int POWERUP_MAXSPEED = 400;
+    public static final int POWERUP_MINSPEED = 150;
+    public static final int POWERUP_MAXSPEED = 250;
+
+    public static final int POWERUP_DURATION = 5;
+    public static final double POWERUP_RATIO = 1.2;
+
+
 
 //    Life and level text size
     public static final int TEXT_SIZE = 20;
@@ -62,19 +66,23 @@ public class Game {
 
 
 
-    private ScreenController screenController;
+    private LevelScreenController levelScreenController;
     private GameController gameController;
     private GamePhysics physics;
     private Timeline animation;
 
     private static Random dice = new Random();
 
-    private boolean paused = true;
+    private boolean paused = false;
+
+    private boolean timerStarted = false;
+    private int timer = 0;
+    private boolean specialPaused = false;
 
     public void initialize(Stage stage) {
 //        Initialize screen controller for levels
-        screenController = new ScreenController(1, 3);
-        Scene scene = screenController.getScene();
+        levelScreenController = new LevelScreenController(1, 3, 0);
+        Scene scene = levelScreenController.getScene();
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.show();
@@ -82,7 +90,7 @@ public class Game {
 
         gameController = new GameController();
 //        Initialize game mechanics
-        physics = new GamePhysics(screenController);
+        physics = new GamePhysics(levelScreenController);
 //        Attach "game loop" to timeline to play it
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> step());
 //        Respond to key actions
@@ -91,35 +99,77 @@ public class Game {
         animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.getKeyFrames().add(frame);
-        animation.pause();
+        pause();
     }
 
 
 
 //    Performs methods every frame
     private void step () {
-//        Detect collisions
-        physics.collisionEffects();
-//        Move objects
-        physics.moveScreenElements();
-        if (physics.ballOutBottom()) {
-            loseLife();
-        }
+        if (!specialPaused) {
+//            Detect collisions
+            physics.collisionEffects();
+//            Move all objects
+            physics.moveAllScreenElements();
+//            Life lost
+            if (physics.ballOutBottom()) {
+                loseLife();
+            }
+//            Level Completed
+            if (levelScreenController.allBricksRemoved()) {
+                nextLevel();
+            }
 
-        if (screenController.allBricksRemoved()) {
-            nextLevel();
+            if (physics.getPowerup() != 0) {
+                if (physics.getPowerup() == 1) {
+                    physics.removeBricksEffect();
+                }
+                else if (physics.getPowerup() == 2) {
+                    tempPaddleEffects();
+                }
+                else {
+                    gameController.increasePower();
+                    levelScreenController.changePowerText(gameController.getPower());
+                }
+            }
+        }
+        else {
+            physics.onlyMovePaddle();
+        }
+        if (timerStarted) {
+            if (timer > 0) {
+                timer--;
+            }
+            else {
+                stopTimer();
+            }
         }
     }
 
+    private void tempPaddleEffects() {
+        levelScreenController.getPaddle().setSpeed(POWERUP_RATIO);
+        levelScreenController.getPaddle().setWidth(PADDLE_WIDTH * POWERUP_RATIO);
+        timer = POWERUP_DURATION * FRAMES_PER_SECOND;
+        timerStarted = true;
+    }
+
+
+    private void stopTimer() {
+        levelScreenController.getPaddle().setSpeed(1 / POWERUP_RATIO);
+        levelScreenController.getPaddle().setWidth(1 / PADDLE_WIDTH * POWERUP_RATIO);
+        timerStarted = false;
+    }
 
     private void loseLife() {
         gameController.decreaseLife();
         if (gameController.isDead()) {
-            animation.stop();
+//            animation.stop();
+            pause();
         }
-        screenController.resetBallPaddle();
-        screenController.setLife(gameController.getLife());
+        levelScreenController.resetBallPaddle();
+        levelScreenController.changeLifeText(gameController.getLife());
         physics.getScreenElements();
+        pause();
     }
 
     private void nextLevel() {
@@ -127,39 +177,59 @@ public class Game {
         if (gameController.isWon()) {
             animation.stop();
         }
-        screenController.setLevel(gameController.getLevel());
+        levelScreenController.setLevel(gameController.getLevel());
         physics.getScreenElements();
+        pause();
     }
 
 
     //    What to do each time a key is pressed
     private void handleKeyPress(KeyCode code) {
-//        Pause game
-        if (code == KeyCode.SPACE && !paused) {
-            animation.pause();
-            paused = true;
-        }
-//        Resume game
-        else if (code == KeyCode.SPACE && paused) {
-            animation.play();
-            paused = false;
+//        Pause and resume game
+        if (code == KeyCode.SPACE) {
+            pause();
         }
 //        Move paddle to the right
         else if (code == KeyCode.RIGHT) {
-            screenController.setPaddleDirection(1);
+            levelScreenController.setPaddleDirection(1);
         }
 //        Move paddle to the left
         else if (code == KeyCode.LEFT) {
-            screenController.setPaddleDirection(-1);
+            levelScreenController.setPaddleDirection(-1);
+        }
+        else if (code == KeyCode.P) {
+            specialPause();
         }
     }
 
     private void handleKeyRelease(KeyCode code) {
 //        Stop paddle movement when left or right is released
         if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
-            screenController.setPaddleDirection(0);
+            levelScreenController.setPaddleDirection(0);
         }
     }
 
+
+    private void pause() {
+        if (paused) {
+            animation.play();
+            paused = false;
+        }
+        else {
+            animation.pause();
+            paused = true;
+        }
+    }
+
+    private void specialPause() {
+        if (!specialPaused && gameController.getPower() > 0) {
+            gameController.usePower();
+            levelScreenController.changePowerText(gameController.getPower());
+            specialPaused = true;
+        }
+        else {
+            specialPaused = false;
+        }
+    }
 
 }

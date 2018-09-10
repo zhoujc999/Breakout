@@ -1,32 +1,21 @@
 package Breakout;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.layout.StackPane;
 
 public class GamePhysics {
-    private ScreenController sc;
+    private LevelScreenController lsc;
     private Ball ball;
     private Paddle paddle;
     private ArrayList<Brick> bricks;
     private ArrayList<Brick> bricksToBeRemoved;
     private ArrayList<Powerup> powerups;
     private ArrayList<Powerup> powerupsToBeRemoved;
+    private int powerupType;
 
 
 
-    public GamePhysics(ScreenController screenController) {
-        sc = screenController;
+    public GamePhysics(LevelScreenController levelScreenController) {
+        lsc = levelScreenController;
         bricksToBeRemoved = new ArrayList<>();
         powerupsToBeRemoved = new ArrayList<>();
         getScreenElements();
@@ -34,16 +23,21 @@ public class GamePhysics {
 
 
     public void getScreenElements() {
-        ball = sc.getBall();
-        paddle = sc.getPaddle();
-        bricks = sc.getBricks();
-        powerups = sc.getPowerups();
+        ball = lsc.getBall();
+        paddle = lsc.getPaddle();
+        bricks = lsc.getBricks();
+        powerups = lsc.getPowerups();
+        powerupType = 0;
     }
 
-    public void moveScreenElements() {
-        sc.moveBall();
-        sc.movePaddle();
-        sc.
+    public void moveAllScreenElements() {
+        lsc.moveBall();
+        lsc.movePaddle();
+        lsc.movePowerups();
+    }
+
+    public void onlyMovePaddle() {
+        lsc.movePaddle();
     }
 
     public void collisionEffects() {
@@ -51,6 +45,7 @@ public class GamePhysics {
         ballWithWall();
         ballWithPaddle();
         ballWithBricks();
+        deactivatePowerup();
         paddleWithPowerups();
     }
 
@@ -146,8 +141,21 @@ public class GamePhysics {
             b.gotHit();
         }
         if (b.toBeRemoved()) {
-            sc.removeBrick(b);
+            lsc.removeBrick(b);
         }
+    }
+
+    public void removeBricksEffect() {
+        bricksToBeRemoved.clear();
+        for (Brick brick: bricks) {
+            if (brick.getType() == 3) {
+                lsc.removeBrick(brick);
+                bricksToBeRemoved.add(brick);
+            }
+
+        }
+        bricks.removeAll(bricksToBeRemoved);
+        lsc.clearNumPermBlocks();
     }
 
     private void paddleWithPowerups() {
@@ -156,7 +164,7 @@ public class GamePhysics {
             paddleWithPowerup(powerup);
             powerupOutBottom(powerup);
             if (powerup.toBeRemoved()) {
-                bricksToBeRemoved.add(powerup);
+                powerupsToBeRemoved.add(powerup);
             }
 
         }
@@ -175,11 +183,34 @@ public class GamePhysics {
         double paddleMaxY = paddle.getMaxY();
 
 
-        // check for hit on the upper edge
-        if (ball.getYVel() > 0 && powerupMaxY >= paddleMinY && powerupMinY <= paddleMinY && ((powerupMaxX >= paddleMinX) && (powerupMaxX <= paddleMaxX) || (powerupMinX >= paddleMinX && powerupMinX <= paddleMaxX))) {
+        // check whether paddle catches power-up
+        if (paddle.getView().intersects(powerup.getView().getBoundsInParent())) {
+            activatePowerup(powerup.getType());
             powerup.remove();
+            lsc.removePowerup(powerup);
         }
 
+    }
+
+
+    private void activatePowerup(int type) {
+        powerupType = type;
+    }
+
+    public int getPowerup() {
+        return powerupType;
+    }
+    private void deactivatePowerup() {
+        powerupType = 0;
+    }
+
+
+    private void powerupOutBottom(Powerup powerup) {
+        if (powerup.getMaxY() >= Game.HEIGHT) {
+            powerup.remove();
+            lsc.removePowerup(powerup);
+
+        }
     }
 
 

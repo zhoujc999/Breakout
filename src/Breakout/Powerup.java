@@ -52,7 +52,6 @@ public class Powerup {
         powerup = new ImageView(image);
 
         yVel = Game.getRandomInRange(Game.POWERUP_MINSPEED, Game.POWERUP_MAXSPEED);
-
         double x = brick.getMinX() + Game.BRICK_WIDTH / 2;
         double y = brick.getMinY();
         powerup.setX(x);
@@ -93,10 +92,9 @@ public class Powerup {
         return remove;
     }
 
-    public  released() {
-
-    }
     public void move(){
-        powerup.setY(getMinY() + Game.SECOND_DELAY * yVel);
+        if (brick.toBeRemoved()) {
+            powerup.setY(powerup.getY() + Game.SECOND_DELAY * yVel);
+        }
     }
 }

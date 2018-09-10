@@ -13,7 +13,7 @@ import javafx.scene.text.Font;
 
 
 
-public class ScreenController {
+public class LevelScreenController {
 
     private Scene scene;
     private Group root;
@@ -22,17 +22,20 @@ public class ScreenController {
     private ArrayList<Brick> bricks;
     private ArrayList<Powerup> powerups;
     private int paddleDirection;
-    private int numPermanentBlocks;
+    private int numPermBlocks;
     private Text levelText;
     private Text lifeText;
+    private Text powerText;
 
     private int level;
     private int life;
+    private int power;
 
-    public ScreenController(int gameLevel, int gameLife) {
+    public LevelScreenController(int gameLevel, int gameLife, int gamePower) {
         level = gameLevel;
         life = gameLife;
-        numPermanentBlocks = 0;
+        power = gamePower;
+        numPermBlocks = 0;
         root = new Group();
         // create a place to see the shapes
         scene = new Scene(root, Game.WIDTH, Game.HEIGHT, Game.BACKGROUND);
@@ -41,6 +44,7 @@ public class ScreenController {
         setBricks();
         setLevelText();
         setLifeText();
+        setPowerText();
         paddleDirection = 0;
     }
 
@@ -56,18 +60,14 @@ public class ScreenController {
 
     public void setLevel(int l) {
         level = l;
-        numPermanentBlocks = 0;
+        numPermBlocks = 0;
         resetBallPaddle();
         removeAllBricks();
         removeAllPowerups();
         setBricks();
-        changeLevelText();
+        changeLevelText(l);
     }
 
-    public void setLife(int l) {
-        life = l;
-        changeLifeText();
-    }
 
 
     public void resetBallPaddle() {
@@ -92,6 +92,8 @@ public class ScreenController {
     public void movePaddle() {
         paddle.move(paddleDirection);
     }
+
+
 
     private void resetPaddle() {
         root.getChildren().remove(paddle.getView());
@@ -158,7 +160,7 @@ public class ScreenController {
         for (Integer brickType: bricksType) {
             Brick brick = new Brick(brickXPos + Game.BRICK_XGAP,brickYPos + Game.BRICK_YGAP, brickType);
             if (brickType == 3) {
-                numPermanentBlocks++;
+                numPermBlocks++;
             }
             else if (brickType == 2) {
                 setPowerup(brick);
@@ -208,13 +210,18 @@ public class ScreenController {
         }
         bricks.clear();
     }
+
+    public void clearNumPermBlocks() {
+        numPermBlocks = 0;
+    }
+
     public boolean allBricksRemoved() {
-        return bricks.size() == numPermanentBlocks;
+        return bricks.size() == numPermBlocks;
     }
 
 
     private void setPowerup(Brick b) {
-        int randInt = Game.getRandomInRange(0, 30);
+        int randInt = Game.getRandomInRange(23, 28);
         Powerup powerup;
         if (randInt < 10) {
             powerup = new Powerup(1, b);
@@ -238,14 +245,19 @@ public class ScreenController {
         for (Powerup p: powerups) {
             p.move();
         }
-
     }
+
+    public void removePowerup(Powerup p) {
+        root.getChildren().remove(p.getView());
+    }
+
     private void removeAllPowerups() {
         for (Powerup powerup: powerups) {
             root.getChildren().remove(powerup.getView());
         }
         powerups.clear();
     }
+
 
     private void setLevelText() {
         levelText = new Text(Game.WIDTH * 4 / 5, Game.HEIGHT / 30, "Level: " + level);
@@ -254,7 +266,8 @@ public class ScreenController {
         root.getChildren().add(levelText);
     }
 
-    private void changeLevelText() {
+    public void changeLevelText(int l) {
+        level = l;
         levelText.setText("Level: " + level);
     }
 
@@ -265,7 +278,21 @@ public class ScreenController {
         root.getChildren().add(lifeText);
     }
 
-    private void changeLifeText() {
+    public void changeLifeText(int l) {
+        life = l;
         lifeText.setText("Lives: " + life);
+    }
+
+    private void setPowerText() {
+        powerText = new Text(Game.WIDTH * 2 / 5, Game.HEIGHT / 30, "Power: " + power);
+        Font font = new Font(Game.TEXT_SIZE);
+        powerText.setFont(font);
+        root.getChildren().add(powerText);
+    }
+
+
+    public void changePowerText(int p) {
+        power = p;
+        powerText.setText("Power: " + power);
     }
 }

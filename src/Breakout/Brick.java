@@ -35,7 +35,7 @@ public class Brick {
 
             case 2:
                 path = Game.BRICK2_IMAGE;
-                hits = 3;
+                hits = 1;
                 break;
 
             case 3:
